@@ -243,7 +243,7 @@ app.get('/auth/google/callback', async (req, res) => {
     const sessionToken = signSession(user);
     setSessionCookie(res, sessionToken);
 
-    return res.redirect(`${FRONTEND_URL}/?login=success`);
+    return res.redirect(`${FRONTEND_URL}/?login=success&role=${user.role}&name=${encodeURIComponent(user.name)}&email=${encodeURIComponent(user.email)}`);
   } catch (err) {
     console.error('OAuth callback error:', err.message);
     return res.redirect(`${FRONTEND_URL}/?auth_error=token_exchange_failed`);
