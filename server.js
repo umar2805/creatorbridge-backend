@@ -296,7 +296,6 @@ app.post('/auth/login', async (req, res) => {
   const { email, password } = req.body;
   const user = await User.findOne({ email });
   if (!user) return res.status(400).json({ error: 'Invalid email or password' });
-  if (!user.verified) return res.status(400).json({ error: 'Please verify your email first' });
   const match = await bcrypt.compare(password, user.password);
   if (!match) return res.status(400).json({ error: 'Invalid email or password' });
   res.json({ ok: true, name: user.name, email: user.email, role: user.role });
