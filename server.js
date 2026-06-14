@@ -151,12 +151,26 @@ app.get('/auth/google/callback', async (req, res) => {
     const payload = ticket.getPayload();
     if (!payload?.email) throw new Error('ID token payload missing email');
 
+    // Find existing user or create new one
+    let dbUser = await User.findOne({ email: payload.email });
+
+    if (!dbUser) {
+      // First time signing in with Google — create the account
+      dbUser = await User.create({
+        name:     payload.name || payload.email,
+        email:    payload.email,
+        password: null,
+        role,
+        verified: true,
+      });
+    }
+
     const user = {
-      sub:     payload.sub,
-      email:   payload.email,
-      name:    payload.name || payload.email,
+      sub:     dbUser._id.toString(),
+      email:   dbUser.email,
+      name:    dbUser.name,
       picture: payload.picture || '',
-      role,
+      role:    dbUser.role,
     };
 
     const sessionToken = signSession(user);
