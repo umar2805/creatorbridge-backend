@@ -287,7 +287,7 @@ app.post('/auth/signup', async (req, res) => {
   if (existing) return res.status(400).json({ error: 'Email already registered' });
   const hashed = await bcrypt.hash(password, 10);
   const verifyToken = crypto.randomBytes(32).toString('hex');
-  await User.create({ name, email, password: hashed, role, verifyToken });
+  await User.create({ name, email, password: hashed, role, verifyToken, verified: true });
   res.json({ ok: true, message: 'Account created! Please verify your email.' });
 });
 
