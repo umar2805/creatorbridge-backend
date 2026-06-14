@@ -263,7 +263,6 @@ app.post('/auth/logout', (req, res) => {
 // ── Email/Password Auth ──
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
-const crypto = require('crypto');
 
 // Connect to MongoDB
 mongoose.connect(process.env.MONGODB_URI);
