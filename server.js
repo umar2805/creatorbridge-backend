@@ -59,10 +59,10 @@ mongoose.connect(process.env.MONGODB_URI)
   .catch(err => { console.error('MongoDB connection failed:', err); process.exit(1); });
 
 const userSchema = new mongoose.Schema({
-  name:    String,
-  email:   { type: String, unique: true },
+  name:     String,
+  email:    { type: String, unique: true },
   password: String,
-  role:    String,
+  role:     String,
   verified: { type: Boolean, default: true },
 });
 const User = mongoose.model('User', userSchema);
@@ -180,7 +180,9 @@ app.post('/auth/logout', (req, res) => {
   res.json({ ok: true });
 });
 
-// Email/password signup
+// ── Email/Password Auth ──
+
+// Signup
 app.post('/auth/signup', async (req, res) => {
   try {
     const { name, email, password, role } = req.body;
@@ -200,8 +202,8 @@ app.post('/auth/signup', async (req, res) => {
   }
 });
 
-// Email/password login
-app.post('/auth/login', async (req, res) => {
+// Step 1: validate credentials, return a short-lived one-time token
+app.post('/auth/login/token', async (req, res) => {
   try {
     const { email, password } = req.body;
     if (!email || !password)
@@ -213,20 +215,32 @@ app.post('/auth/login', async (req, res) => {
     const match = await bcrypt.compare(password, user.password);
     if (!match) return res.status(400).json({ error: 'Invalid email or password' });
 
-    // ── FIX: set session cookie so /auth/me works ──
-    const sessionToken = signSession({
-      sub:     user._id.toString(),
-      email:   user.email,
-      name:    user.name,
-      picture: '',
-      role:    user.role,
-    });
-    setSessionCookie(res, sessionToken);
+    // 60-second one-time token just to carry login info to the redirect
+    const oneTimeToken = jwt.sign(
+      { sub: user._id.toString(), email: user.email, name: user.name, picture: '', role: user.role },
+      JWT_SECRET,
+      { expiresIn: '60s' }
+    );
 
-    res.json({ ok: true, name: user.name, email: user.email, role: user.role });
+    res.json({ token: oneTimeToken });
   } catch (err) {
-    console.error('Login error:', err.message);
+    console.error('Login token error:', err.message);
     res.status(500).json({ error: 'Server error. Please try again.' });
+  }
+});
+
+// Step 2: browser navigates here, 7-day cookie gets set, redirects back like Google
+app.get('/auth/login/verify', (req, res) => {
+  const { token } = req.query;
+  if (!token) return res.redirect(`${FRONTEND_URL}/?auth_error=missing_token`);
+
+  try {
+    const user = jwt.verify(token, JWT_SECRET);
+    const sessionToken = signSession(user);
+    setSessionCookie(res, sessionToken);
+    return res.redirect(`${FRONTEND_URL}/?login=success&role=${user.role}&name=${encodeURIComponent(user.name)}&email=${encodeURIComponent(user.email)}`);
+  } catch {
+    return res.redirect(`${FRONTEND_URL}/?auth_error=invalid_token`);
   }
 });
 
