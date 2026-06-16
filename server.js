@@ -64,6 +64,12 @@ const userSchema = new mongoose.Schema({
   password: String,
   role:     String,
   verified: { type: Boolean, default: true },
+  onboarding: {
+    done:   { type: Boolean, default: false },
+    bio:    String,
+    skills: [String],
+    img:    String,
+  },
 });
 const User = mongoose.model('User', userSchema);
 
@@ -151,26 +157,12 @@ app.get('/auth/google/callback', async (req, res) => {
     const payload = ticket.getPayload();
     if (!payload?.email) throw new Error('ID token payload missing email');
 
-    // Find existing user or create new one
-    let dbUser = await User.findOne({ email: payload.email });
-
-    if (!dbUser) {
-      // First time signing in with Google — create the account
-      dbUser = await User.create({
-        name:     payload.name || payload.email,
-        email:    payload.email,
-        password: null,
-        role,
-        verified: true,
-      });
-    }
-
     const user = {
-      sub:     dbUser._id.toString(),
-      email:   dbUser.email,
-      name:    dbUser.name,
+      sub:     payload.sub,
+      email:   payload.email,
+      name:    payload.name || payload.email,
       picture: payload.picture || '',
-      role:    dbUser.role,
+      role,
     };
 
     const sessionToken = signSession(user);
@@ -255,6 +247,33 @@ app.get('/auth/login/verify', (req, res) => {
     return res.redirect(`${FRONTEND_URL}/?login=success&role=${user.role}&name=${encodeURIComponent(user.name)}&email=${encodeURIComponent(user.email)}`);
   } catch {
     return res.redirect(`${FRONTEND_URL}/?auth_error=invalid_token`);
+  }
+});
+
+// Save onboarding profile
+app.post('/auth/onboarding', requireAuth, async (req, res) => {
+  try {
+    const { bio, skills, img } = req.body;
+    await User.findOneAndUpdate(
+      { email: req.user.email },
+      { onboarding: { done: true, bio, skills, img } }
+    );
+    res.json({ ok: true });
+  } catch (err) {
+    console.error('Onboarding save error:', err.message);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// Get onboarding profile
+app.get('/auth/onboarding', requireAuth, async (req, res) => {
+  try {
+    const user = await User.findOne({ email: req.user.email });
+    if (!user) return res.status(404).json({ error: 'User not found' });
+    res.json({ onboarding: user.onboarding || {} });
+  } catch (err) {
+    console.error('Onboarding fetch error:', err.message);
+    res.status(500).json({ error: 'Server error' });
   }
 });
 
