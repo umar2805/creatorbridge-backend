@@ -187,7 +187,7 @@ app.get('/auth/google/callback', async (req, res) => {
     const sessionToken = signSession(user);
     setSessionCookie(res, sessionToken);
 
-    return res.redirect(`${FRONTEND_URL}/?login=success&role=${user.role}&name=${encodeURIComponent(user.name)}&email=${encodeURIComponent(user.email)}`);
+    return res.redirect(`${FRONTEND_URL}/dashboard.html?login=success&role=${user.role}&name=${encodeURIComponent(user.name)}&email=${encodeURIComponent(user.email)}`);
   } catch (err) {
     console.error('OAuth callback error:', err.message);
     return res.redirect(`${FRONTEND_URL}/?auth_error=token_exchange_failed`);
@@ -254,7 +254,7 @@ app.post('/auth/login/token', async (req, res) => {
   }
 });
 
-// Step 2: browser navigates here, 7-day cookie gets set, redirects back like Google
+// Step 2: browser navigates here, 7-day cookie gets set, redirects straight to dashboard
 app.get('/auth/login/verify', (req, res) => {
   const { token } = req.query;
   if (!token) return res.redirect(`${FRONTEND_URL}/?auth_error=missing_token`);
@@ -263,7 +263,7 @@ app.get('/auth/login/verify', (req, res) => {
     const user = jwt.verify(token, JWT_SECRET);
     const sessionToken = signSession(user);
     setSessionCookie(res, sessionToken);
-    return res.redirect(`${FRONTEND_URL}/?login=success&role=${user.role}&name=${encodeURIComponent(user.name)}&email=${encodeURIComponent(user.email)}`);
+    return res.redirect(`${FRONTEND_URL}/dashboard.html?login=success&role=${user.role}&name=${encodeURIComponent(user.name)}&email=${encodeURIComponent(user.email)}`);
   } catch {
     return res.redirect(`${FRONTEND_URL}/?auth_error=invalid_token`);
   }
@@ -295,7 +295,6 @@ app.get('/auth/onboarding', requireAuth, async (req, res) => {
     res.status(500).json({ error: 'Server error' });
   }
 });
-
 
 // Upload profile picture to Cloudinary
 app.post('/upload/pfp', requireAuth, upload.single('pfp'), async (req, res) => {
@@ -363,6 +362,7 @@ app.get('/upload/portfolio', requireAuth, async (req, res) => {
     res.status(500).json({ error: 'Server error' });
   }
 });
+
 app.listen(PORT, () => {
   console.log(`CreatorBridge auth backend listening on http://127.0.0.1:${PORT}`);
   console.log(`Frontend URL: ${FRONTEND_URL}`);
