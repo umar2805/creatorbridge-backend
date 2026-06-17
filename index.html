@@ -1,0 +1,1727 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CreatorBridge — Find Creative Talent Without the Endless Search</title>
+  <meta name="description" content="Connect creators with skilled video editors, thumbnail designers, motion designers, and creative professionals in one dedicated platform." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=DM+Sans:wght@600;700;800&family=Epilogue:wght@700;800&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #F0FCFA;
+      --accent: #628ECB;
+      --accent-dark: #4a72a8;
+      --accent-light: #E8F1FB;
+      --white: #ffffff;
+      --text: #1a2332;
+      --text-muted: #6b7a8d;
+      --text-light: #9aa5b4;
+      --border: rgba(98,142,203,0.15);
+      --shadow-sm: 0 2px 8px rgba(98,142,203,0.08);
+      --shadow-md: 0 8px 32px rgba(98,142,203,0.12);
+      --shadow-lg: 0 20px 60px rgba(98,142,203,0.18);
+      --radius-sm: 12px;
+      --radius-md: 16px;
+      --radius-lg: 20px;
+      --radius-xl: 24px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      padding: 0 2rem;
+      height: 68px;
+      display: flex; align-items: center; justify-content: space-between;
+      transition: background 0.3s, backdrop-filter 0.3s, box-shadow 0.3s;
+    }
+    nav.scrolled {
+      background: rgba(240,252,250,0.82);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      box-shadow: 0 1px 0 var(--border), var(--shadow-sm);
+    }
+    .nav-logo {
+      display: flex; align-items: center; gap: 10px;
+      font-family: 'Epilogue', sans-serif;
+      font-weight: 700; font-size: 1.25rem;
+      color: var(--text); text-decoration: none;
+    }
+    .nav-logo-mark {
+      width: 32px; height: 32px; border-radius: 9px;
+      background: linear-gradient(135deg, var(--accent) 0%, #7db3e8 100%);
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 4px 12px rgba(98,142,203,0.35);
+    }
+    .nav-logo-mark svg { color: white; }
+
+    .nav-links {
+      display: flex; align-items: center; gap: 2rem;
+      list-style: none;
+      margin-left: auto;
+    }
+    .nav-links a {
+      text-decoration: none; color: var(--text-muted);
+      font-size: 0.9rem; font-weight: 500;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--text); }
+
+    .hamburger {
+      display: none;
+      flex-direction: column; gap: 5px;
+      cursor: pointer; padding: 4px;
+      margin-left: auto;
+      background: none; border: none;
+    }
+    .hamburger span {
+      display: block; width: 22px; height: 2px;
+      background: var(--text); border-radius: 2px;
+      transition: transform 0.3s, opacity 0.3s;
+    }
+    .hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .hamburger.open span:nth-child(2) { opacity: 0; }
+    .hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+    .mobile-menu {
+      position: fixed; top: 68px; left: 0; right: 0;
+      background: rgba(240,252,250,0.97);
+      backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      border-top: 1px solid var(--border);
+      padding: 0.5rem 1.5rem 1.2rem;
+      display: none; flex-direction: column;
+      box-shadow: var(--shadow-md);
+      z-index: 99;
+    }
+    .mobile-menu.open { display: flex; }
+    .mobile-menu a {
+      color: var(--text); text-decoration: none;
+      font-weight: 500; font-size: 1rem;
+      padding: 0.85rem 0;
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; gap: 10px;
+      transition: color 0.2s;
+    }
+    .mobile-menu a:last-child { border-bottom: none; }
+    .mobile-menu a:hover { color: var(--accent); }
+    .mobile-menu a .link-arrow { margin-left: auto; opacity: 0.35; font-size: 0.85rem; }
+
+    /* ── HERO ── */
+    .hero {
+      min-height: 100vh;
+      padding: 120px 2rem 80px;
+      display: flex; flex-direction: column; align-items: center;
+      text-align: center;
+      background: radial-gradient(ellipse 80% 60% at 50% -10%, rgba(98,142,203,0.12) 0%, transparent 70%);
+      position: relative; overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: radial-gradient(circle 600px at 80% 60%, rgba(98,142,203,0.06) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--white); border: 1px solid var(--border);
+      border-radius: 100px; padding: 6px 16px;
+      font-size: 0.8rem; font-weight: 600; color: var(--accent);
+      margin-bottom: 2rem;
+      box-shadow: var(--shadow-sm);
+    }
+    .hero-badge-dot { width: 7px; height: 7px; border-radius: 50%; background: #3ec97a; animation: pulse 2s infinite; }
+    @keyframes pulse { 0%,100%{box-shadow:0 0 0 0 rgba(62,201,122,0.4)} 50%{box-shadow:0 0 0 6px rgba(62,201,122,0)} }
+    .hero h1 {
+      font-family: 'Epilogue', sans-serif;
+      font-size: clamp(2.4rem, 5.5vw, 4rem);
+      font-weight: 800; line-height: 1.12;
+      color: var(--text); max-width: 780px;
+      margin-bottom: 1.4rem; letter-spacing: -0.03em;
+    }
+    .hero h1 .accent-word { color: var(--accent); }
+    .hero-sub {
+      font-size: clamp(1rem, 2vw, 1.2rem);
+      color: var(--text-muted); max-width: 520px;
+      margin-bottom: 2.5rem; line-height: 1.65;
+    }
+    .hero-ctas { display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center; margin-bottom: 4rem; }
+    .btn-primary-lg {
+      padding: 0.85rem 2rem;
+      background: var(--accent); color: white;
+      border: none; border-radius: var(--radius-md);
+      font-family: inherit; font-size: 1rem; font-weight: 600;
+      cursor: pointer; text-decoration: none;
+      box-shadow: 0 6px 24px rgba(98,142,203,0.38);
+      transition: all 0.2s;
+      display: inline-flex; align-items: center; gap: 8px;
+    }
+    .btn-primary-lg:hover { background: var(--accent-dark); transform: translateY(-2px); box-shadow: 0 10px 30px rgba(98,142,203,0.45); }
+    .btn-secondary-lg {
+      padding: 0.85rem 2rem;
+      background: var(--white); color: var(--text);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-md);
+      font-family: inherit; font-size: 1rem; font-weight: 600;
+      cursor: pointer; text-decoration: none;
+      box-shadow: var(--shadow-sm);
+      transition: all 0.2s;
+      display: inline-flex; align-items: center; gap: 8px;
+    }
+    .btn-secondary-lg:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-2px); box-shadow: var(--shadow-md); }
+
+    /* DUAL DASHBOARDS */
+    .hero-dashboards-wrap {
+      width: 100%; max-width: 1060px;
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      animation: floatUp 0.8s ease both;
+    }
+    @keyframes floatUp { from{opacity:0;transform:translateY(30px)} to{opacity:1;transform:translateY(0)} }
+    .hero-visual {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-lg);
+      overflow: hidden;
+    }
+    .hero-visual-bar {
+      padding: 12px 18px;
+      background: linear-gradient(135deg, #f8fafc 0%, #f0f6ff 100%);
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; gap: 8px;
+    }
+    .hero-visual-bar-label { font-size: 0.75rem; color: var(--text-light); font-weight: 600; margin-left: 6px; flex: 1; }
+    .hero-visual-bar-badge {
+      font-size: 0.68rem; font-weight: 700; padding: 2px 9px;
+      border-radius: 100px; letter-spacing: 0.04em;
+    }
+    .badge-creator { background: #e8f1fb; color: var(--accent); }
+    .badge-editor { background: #e8fdf5; color: #16a34a; }
+    .dot { width: 10px; height: 10px; border-radius: 50%; }
+    .dot-r { background: #fc6e6e; }
+    .dot-y { background: #fbbf24; }
+    .dot-g { background: #34d399; }
+    .hero-dashboard {
+      padding: 18px;
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 12px; background: #fafcfe;
+    }
+    .dash-step {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 20px 16px;
+      display: flex; flex-direction: column; gap: 10px;
+      transition: box-shadow 0.2s, transform 0.2s;
+    }
+    .dash-step:hover { box-shadow: var(--shadow-md); transform: translateY(-3px); }
+    .dash-icon {
+      width: 38px; height: 38px; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem;
+    }
+    .dash-step-num { font-size: 0.7rem; font-weight: 700; color: var(--text-light); letter-spacing: 0.08em; text-transform: uppercase; }
+    .dash-step-title { font-size: 0.82rem; font-weight: 700; color: var(--text); line-height: 1.3; }
+    .dash-step-sub { font-size: 0.73rem; color: var(--text-muted); line-height: 1.4; }
+    .dash-pill {
+      display: inline-flex; align-items: center; gap: 5px;
+      background: var(--bg); border-radius: 100px;
+      padding: 3px 9px; font-size: 0.68rem; font-weight: 600;
+    }
+    .pill-green { color: #16a34a; } .pill-blue { color: var(--accent); } .pill-orange { color: #d97706; } .pill-purple { color: #7c3aed; }
+    .progress-bar { height: 4px; background: #e8f0fe; border-radius: 4px; overflow: hidden; }
+    .progress-fill { height: 100%; border-radius: 4px; background: linear-gradient(90deg, var(--accent), #7db3e8); }
+
+    /* ── SECTIONS COMMON ── */
+    section { padding: 100px 2rem; }
+    .container { max-width: 1100px; margin: 0 auto; }
+    .section-label {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--accent-light); color: var(--accent);
+      border-radius: 100px; padding: 5px 14px;
+      font-size: 0.78rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
+      margin-bottom: 1.2rem;
+    }
+    .section-title {
+      font-family: 'Epilogue', sans-serif;
+      font-size: clamp(1.8rem, 3.5vw, 2.6rem);
+      font-weight: 800; color: var(--text);
+      letter-spacing: -0.03em; line-height: 1.18;
+      margin-bottom: 1rem;
+    }
+    .section-sub { font-size: 1.05rem; color: var(--text-muted); max-width: 520px; line-height: 1.65; }
+    .section-header { margin-bottom: 3.5rem; }
+    .section-header.center { text-align: center; display: flex; flex-direction: column; align-items: center; }
+
+    /* ── FEATURES ── */
+    .features-bg { background: var(--white); }
+    .features-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 24px;
+    }
+    .feat-card {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 32px 28px;
+      transition: all 0.25s;
+      position: relative; overflow: hidden;
+    }
+    .feat-card::before {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(135deg, rgba(98,142,203,0.05) 0%, transparent 60%);
+      opacity: 0; transition: opacity 0.25s;
+    }
+    .feat-card:hover { transform: translateY(-6px); box-shadow: var(--shadow-md); border-color: rgba(98,142,203,0.3); }
+    .feat-card:hover::before { opacity: 1; }
+    .feat-icon {
+      width: 52px; height: 52px; border-radius: 14px;
+      background: linear-gradient(135deg, var(--accent) 0%, #7db3e8 100%);
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 1.4rem;
+      box-shadow: 0 6px 18px rgba(98,142,203,0.3);
+    }
+    .feat-icon svg { color: white; }
+    .feat-card h3 { font-family: 'Epilogue', sans-serif; font-size: 1.1rem; font-weight: 700; margin-bottom: 0.6rem; }
+    .feat-card p { font-size: 0.9rem; color: var(--text-muted); line-height: 1.6; }
+
+    /* ── HOW IT WORKS ── */
+    .hiw-track {
+      display: grid; grid-template-columns: repeat(4, 1fr);
+      gap: 0; position: relative;
+    }
+    .hiw-track::before {
+      content: '';
+      position: absolute; top: 28px; left: calc(12.5% + 14px); right: calc(12.5% + 14px);
+      height: 2px;
+      background: linear-gradient(90deg, var(--accent) 0%, rgba(98,142,203,0.2) 100%);
+    }
+    .hiw-step { display: flex; flex-direction: column; align-items: center; text-align: center; padding: 0 16px; }
+    .hiw-num {
+      width: 56px; height: 56px; border-radius: 50%;
+      background: var(--white); border: 2px solid var(--accent);
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Epilogue', sans-serif; font-size: 1.1rem; font-weight: 800; color: var(--accent);
+      margin-bottom: 1.4rem; position: relative; z-index: 1;
+      box-shadow: 0 0 0 6px var(--bg);
+    }
+    .hiw-step:first-child .hiw-num { background: var(--accent); color: white; box-shadow: 0 6px 20px rgba(98,142,203,0.4), 0 0 0 6px var(--bg); }
+    .hiw-step h4 { font-family: 'Epilogue', sans-serif; font-size: 1rem; font-weight: 700; margin-bottom: 0.5rem; }
+    .hiw-step p { font-size: 0.875rem; color: var(--text-muted); line-height: 1.55; }
+
+    /* ── BENEFITS ── */
+    .benefits-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; }
+    .benefit-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-xl);
+      padding: 40px 36px;
+      box-shadow: var(--shadow-sm);
+    }
+    .benefit-card-header { display: flex; align-items: center; gap: 14px; margin-bottom: 2rem; }
+    .benefit-avatar {
+      width: 48px; height: 48px; border-radius: 14px;
+      display: flex; align-items: center; justify-content: center; font-size: 1.4rem;
+    }
+    .benefit-avatar-creator { background: linear-gradient(135deg, #e8f4fd, #c8dffc); }
+    .benefit-avatar-editor { background: linear-gradient(135deg, #e8fdf5, #c8fce1); }
+    .benefit-card h3 { font-family: 'Epilogue', sans-serif; font-size: 1.3rem; font-weight: 700; }
+    .benefit-card h3 span { color: var(--accent); }
+    .benefit-list { list-style: none; display: flex; flex-direction: column; gap: 14px; }
+    .benefit-list li {
+      display: flex; align-items: flex-start; gap: 12px;
+      font-size: 0.93rem; color: var(--text-muted);
+    }
+    .benefit-check {
+      width: 22px; height: 22px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent), #7db3e8);
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px;
+    }
+
+    /* ── TESTIMONIALS ── */
+    .testimonials-bg { background: var(--white); }
+    .testi-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+    .testi-card {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 28px;
+      transition: all 0.25s;
+    }
+    .testi-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); }
+    .testi-quote {
+      font-size: 2rem; color: var(--accent); font-family: Georgia, serif;
+      line-height: 1; margin-bottom: 1rem; opacity: 0.6;
+    }
+    .testi-text { font-size: 0.92rem; color: var(--text-muted); line-height: 1.7; margin-bottom: 1.5rem; }
+    .testi-author { display: flex; align-items: center; gap: 12px; }
+    .testi-avatar {
+      width: 42px; height: 42px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center; font-size: 1.2rem;
+      background: linear-gradient(135deg, var(--accent-light), #ddeeff);
+      flex-shrink: 0;
+    }
+    .testi-name { font-weight: 700; font-size: 0.9rem; }
+    .testi-role { font-size: 0.78rem; color: var(--text-light); }
+    .stars { color: #fbbf24; font-size: 0.8rem; margin-bottom: 4px; }
+
+    /* ── STATS ── */
+    .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; }
+    .stat-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 36px 28px; text-align: center;
+      box-shadow: var(--shadow-sm);
+      transition: all 0.25s;
+    }
+    .stat-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); }
+    .stat-icon {
+      width: 48px; height: 48px; border-radius: 12px;
+      background: var(--accent-light);
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 1.2rem; font-size: 1.3rem;
+    }
+    .stat-number {
+      font-family: 'Epilogue', sans-serif;
+      font-size: 2rem; font-weight: 800; color: var(--text);
+      margin-bottom: 0.4rem;
+    }
+    .stat-label { font-size: 0.88rem; color: var(--text-muted); }
+
+    /* ── PRICING ── */
+    .pricing-bg { background: var(--white); }
+    .pricing-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; align-items: start; }
+    .price-card {
+      background: var(--bg);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-xl);
+      padding: 36px 30px;
+      transition: all 0.25s;
+      position: relative;
+    }
+    .price-card.featured {
+      background: var(--white);
+      border-color: var(--accent);
+      box-shadow: 0 0 0 4px rgba(98,142,203,0.1), var(--shadow-md);
+      transform: scale(1.02);
+    }
+    .price-card:not(.featured):hover { transform: translateY(-4px); box-shadow: var(--shadow-md); }
+    .price-badge {
+      position: absolute; top: -14px; left: 50%; transform: translateX(-50%);
+      background: var(--accent); color: white;
+      padding: 5px 16px; border-radius: 100px;
+      font-size: 0.75rem; font-weight: 700; white-space: nowrap;
+    }
+    .price-name { font-family: 'Epilogue', sans-serif; font-size: 1.1rem; font-weight: 700; margin-bottom: 0.5rem; }
+    .price-amount {
+      font-family: 'Epilogue', sans-serif; font-size: 2.8rem; font-weight: 800; color: var(--text);
+      display: flex; align-items: baseline; gap: 4px;
+    }
+    .price-amount sup { font-size: 1.1rem; font-weight: 600; margin-top: 8px; }
+    .price-period { font-size: 0.9rem; color: var(--text-muted); font-family: 'Inter', sans-serif; }
+    .price-desc { font-size: 0.85rem; color: var(--text-muted); margin: 0.8rem 0 1.5rem; }
+    .price-divider { border: none; border-top: 1px solid var(--border); margin-bottom: 1.5rem; }
+    .price-features { list-style: none; display: flex; flex-direction: column; gap: 11px; margin-bottom: 2rem; }
+    .price-features li { display: flex; align-items: center; gap: 10px; font-size: 0.88rem; color: var(--text-muted); }
+    .price-features li::before { content: '✓'; color: var(--accent); font-weight: 700; flex-shrink: 0; }
+    .price-cta {
+      width: 100%; padding: 0.75rem;
+      border-radius: var(--radius-sm);
+      font-family: inherit; font-size: 0.93rem; font-weight: 600; cursor: pointer;
+      transition: all 0.2s; border: 1.5px solid var(--border);
+    }
+    .price-cta-default { background: var(--white); color: var(--text); }
+    .price-cta-default:hover { border-color: var(--accent); color: var(--accent); }
+    .price-cta-featured { background: var(--accent); color: white; border-color: var(--accent); box-shadow: 0 4px 14px rgba(98,142,203,0.35); }
+    .price-cta-featured:hover { background: var(--accent-dark); transform: translateY(-1px); }
+
+    /* ── FINAL CTA ── */
+    .final-cta {
+      text-align: center;
+      background: linear-gradient(135deg, rgba(98,142,203,0.08) 0%, rgba(98,142,203,0.03) 100%);
+    }
+    .cta-box {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-xl);
+      padding: 80px 60px;
+      box-shadow: var(--shadow-lg);
+      position: relative; overflow: hidden;
+    }
+    .cta-box::before {
+      content: '';
+      position: absolute; top: -60px; right: -60px;
+      width: 240px; height: 240px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(98,142,203,0.12) 0%, transparent 70%);
+    }
+    .cta-box::after {
+      content: '';
+      position: absolute; bottom: -40px; left: -40px;
+      width: 160px; height: 160px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(98,142,203,0.08) 0%, transparent 70%);
+    }
+    .cta-box h2 {
+      font-family: 'Epilogue', sans-serif;
+      font-size: clamp(1.8rem, 3.5vw, 2.6rem);
+      font-weight: 800; color: var(--text);
+      letter-spacing: -0.03em; margin-bottom: 1rem;
+    }
+    .cta-box p { font-size: 1.05rem; color: var(--text-muted); margin-bottom: 2.5rem; }
+    .cta-buttons { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--text);
+      color: rgba(255,255,255,0.6);
+      padding: 60px 2rem 40px;
+    }
+    .footer-grid {
+      max-width: 1100px; margin: 0 auto;
+      display: grid; grid-template-columns: 2fr 1fr 1fr 1fr 1fr; gap: 40px;
+      margin-bottom: 3rem;
+    }
+    .footer-brand .nav-logo { color: white; margin-bottom: 1rem; }
+    .footer-brand p { font-size: 0.88rem; line-height: 1.6; max-width: 220px; }
+    .footer-col h5 { color: white; font-size: 0.9rem; font-weight: 600; margin-bottom: 1.2rem; }
+    .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 0.65rem; }
+    .footer-col a { color: rgba(255,255,255,0.5); text-decoration: none; font-size: 0.875rem; transition: color 0.2s; }
+    .footer-col a:hover { color: white; }
+    .footer-bottom {
+      max-width: 1100px; margin: 0 auto;
+      border-top: 1px solid rgba(255,255,255,0.1);
+      padding-top: 1.5rem;
+      display: flex; align-items: center; justify-content: space-between;
+      font-size: 0.82rem;
+    }
+
+    /* ── SCROLL ANIMATIONS ── */
+    .fade-up { opacity: 0; transform: translateY(24px); transition: opacity 0.6s ease, transform 0.6s ease; }
+    .fade-up.visible { opacity: 1; transform: translateY(0); }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 900px) {
+      .hero-dashboards-wrap { grid-template-columns: 1fr; }
+      .hero-dashboard { grid-template-columns: 1fr 1fr; }
+      .hiw-track { grid-template-columns: 1fr 1fr; gap: 28px; }
+      .hiw-track::before { display: none; }
+      .benefits-grid { grid-template-columns: 1fr; }
+      .testi-grid { grid-template-columns: 1fr 1fr; }
+      .stats-grid { grid-template-columns: 1fr 1fr; }
+      .pricing-grid { grid-template-columns: 1fr; max-width: 420px; margin: 0 auto; }
+      .price-card.featured { transform: none; }
+      .footer-grid { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 640px) {
+      nav { padding: 0 1.2rem; }
+      .nav-links { display: none; }
+      .hamburger { display: flex; }
+      section { padding: 70px 1.2rem; }
+      .hero { padding: 110px 1.2rem 60px; }
+      .hero-dashboards-wrap { grid-template-columns: 1fr; }
+      .hero-dashboard { grid-template-columns: 1fr 1fr; }
+      .testi-grid { grid-template-columns: 1fr; }
+      .stats-grid { grid-template-columns: 1fr 1fr; }
+      .cta-box { padding: 50px 28px; }
+      .footer-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══ NAV ══ -->
+<nav id="navbar">
+  <a href="#" class="nav-logo">
+    <div class="nav-logo-mark">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+    </div>
+    CreatorBridge
+  </a>
+
+  <ul class="nav-links" id="navLinks">
+    <li><a href="#features">Features</a></li>
+    <li><a href="#how-it-works">How It Works</a></li>
+    <li><a href="#pricing">Pricing</a></li>
+    <li><a href="#testimonials">About</a></li>
+  </ul>
+
+  <button class="hamburger" id="hamburger" aria-label="Toggle menu" aria-expanded="false">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<div class="mobile-menu" id="mobileMenu" aria-hidden="true">
+  <a href="#features">Features <span class="link-arrow">→</span></a>
+  <a href="#how-it-works">How It Works <span class="link-arrow">→</span></a>
+  <a href="#pricing">Pricing <span class="link-arrow">→</span></a>
+  <a href="#testimonials">About <span class="link-arrow">→</span></a>
+</div>
+
+<!-- ══ HERO ══ -->
+<section class="hero">
+  <div class="hero-badge">
+    <span class="hero-badge-dot"></span>
+    Now live — 15,000+ professionals joined this month
+  </div>
+  <h1>Find Creative Talent<br/>Without the <span class="accent-word">Endless Search.</span></h1>
+  <p class="hero-sub">Connect creators with skilled editors and creative professionals in one dedicated platform built for the modern content economy.</p>
+  <div class="hero-ctas">
+    <a href="#" class="btn-primary-lg" onclick="openModal('creator'); return false;">
+      I'm a Creator
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>
+    </a>
+    <a href="#" class="btn-secondary-lg" onclick="openModal('editor'); return false;">
+      I'm an Editor
+    </a>
+  </div>
+  <div class="hero-dashboards-wrap">
+
+    <!-- CREATOR DASHBOARD -->
+    <div class="hero-visual">
+      <div class="hero-visual-bar">
+        <div class="dot dot-r"></div>
+        <div class="dot dot-y"></div>
+        <div class="dot dot-g"></div>
+        <span class="hero-visual-bar-label">For Creators</span>
+        <span class="hero-visual-bar-badge badge-creator">I'm a Creator</span>
+      </div>
+      <div class="hero-dashboard">
+        <div class="dash-step">
+          <div class="dash-icon" style="background:linear-gradient(135deg,#e8f4fd,#c8dffc)">📝</div>
+          <div class="dash-step-num">Step 01</div>
+          <div class="dash-step-title">Post a Project</div>
+          <div class="dash-step-sub">YouTube Thumbnail — Tech Review</div>
+          <div class="dash-pill pill-orange">⏳ Open</div>
+          <div class="progress-bar"><div class="progress-fill" style="width:25%"></div></div>
+        </div>
+        <div class="dash-step">
+          <div class="dash-icon" style="background:linear-gradient(135deg,#f0eeff,#ddd5fc)">🔍</div>
+          <div class="dash-step-num">Step 02</div>
+          <div class="dash-step-title">Browse Applicants</div>
+          <div class="dash-step-sub">4 verified pros matched your brief</div>
+          <div class="dash-pill pill-blue">🎯 4 applicants</div>
+          <div class="progress-bar"><div class="progress-fill" style="width:50%"></div></div>
+        </div>
+        <div class="dash-step">
+          <div class="dash-icon" style="background:linear-gradient(135deg,#e8fdf5,#c8fce1)">✅</div>
+          <div class="dash-step-num">Step 03</div>
+          <div class="dash-step-title">Hire & Collaborate</div>
+          <div class="dash-step-sub">Alex R. · Motion Designer · 4.9★</div>
+          <div class="dash-pill pill-green">🤝 In progress</div>
+          <div class="progress-bar"><div class="progress-fill" style="width:75%"></div></div>
+        </div>
+        <div class="dash-step">
+          <div class="dash-icon" style="background:linear-gradient(135deg,#fef9e8,#fde9a0)">🚀</div>
+          <div class="dash-step-num">Step 04</div>
+          <div class="dash-step-title">Approve & Pay</div>
+          <div class="dash-step-sub">Files received · Payment released</div>
+          <div class="dash-pill pill-purple">💜 Complete</div>
+          <div class="progress-bar"><div class="progress-fill" style="width:100%"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- EDITOR DASHBOARD -->
+    <div class="hero-visual">
+      <div class="hero-visual-bar">
+        <div class="dot dot-r"></div>
+        <div class="dot dot-y"></div>
+        <div class="dot dot-g"></div>
+        <span class="hero-visual-bar-label">For Editors</span>
+        <span class="hero-visual-bar-badge badge-editor">I'm an Editor</span>
+      </div>
+      <div class="hero-dashboard">
+        <div class="dash-step">
+          <div class="dash-icon" style="background:linear-gradient(135deg,#e8fdf5,#c8fce1)">🎨</div>
+          <div class="dash-step-num">Step 01</div>
+          <div class="dash-step-title">Build Portfolio</div>
+          <div class="dash-step-sub">Showcase reels, thumbnails & motion work</div>
+          <div class="dash-pill pill-green">✅ Live</div>
+          <div class="progress-bar"><div class="progress-fill" style="width:100%"></div></div>
+        </div>
+        <div class="dash-step">
+          <div class="dash-icon" style="background:linear-gradient(135deg,#e8f4fd,#c8dffc)">📋</div>
+          <div class="dash-step-num">Step 02</div>
+          <div class="dash-step-title">Browse Projects</div>
+          <div class="dash-step-sub">12 new briefs matching your skills</div>
+          <div class="dash-pill pill-blue">📬 12 new</div>
+          <div class="progress-bar"><div class="progress-fill" style="width:40%"></div></div>
+        </div>
+        <div class="dash-step">
+          <div class="dash-icon" style="background:linear-gradient(135deg,#f0eeff,#ddd5fc)">💬</div>
+          <div class="dash-step-num">Step 03</div>
+          <div class="dash-step-title">Apply & Chat</div>
+          <div class="dash-step-sub">Send pitch · Share samples · Get hired</div>
+          <div class="dash-pill pill-orange">⚡ Pending reply</div>
+          <div class="progress-bar"><div class="progress-fill" style="width:65%"></div></div>
+        </div>
+        <div class="dash-step">
+          <div class="dash-icon" style="background:linear-gradient(135deg,#fef9e8,#fde9a0)">💰</div>
+          <div class="dash-step-num">Step 04</div>
+          <div class="dash-step-title">Deliver & Earn</div>
+          <div class="dash-step-sub">$320 released · 5★ review received</div>
+          <div class="dash-pill pill-purple">💜 Paid out</div>
+          <div class="progress-bar"><div class="progress-fill" style="width:100%"></div></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ══ FEATURES ══ -->
+<section class="features-bg" id="features">
+  <div class="container">
+    <div class="section-header center fade-up">
+      <div class="section-label">✦ Platform Features</div>
+      <h2 class="section-title">Everything you need,<br/>nothing you don't.</h2>
+      <p class="section-sub">Built for real working relationships between creators and the talent who power their content.</p>
+    </div>
+    <div class="features-grid">
+      <div class="feat-card fade-up">
+        <div class="feat-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        </div>
+        <h3>Verified Professionals</h3>
+        <p>Every editor and designer goes through a portfolio review and skill verification before joining. No guesswork — just qualified talent.</p>
+      </div>
+      <div class="feat-card fade-up">
+        <div class="feat-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+        </div>
+        <h3>Portfolio Showcase</h3>
+        <p>Creatives display their best work in rich visual portfolios. Browse real samples before sending a single message.</p>
+      </div>
+      <div class="feat-card fade-up">
+        <div class="feat-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        </div>
+        <h3>Direct Messaging</h3>
+        <p>Real-time chat with file sharing and revision threads keeps everything in one place — no email chains, no missed context.</p>
+      </div>
+      <div class="feat-card fade-up">
+        <div class="feat-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+        </div>
+        <h3>Secure Payments</h3>
+        <p>Funds are held in escrow and released only when work is approved. Both sides are protected at every stage of the project.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ HOW IT WORKS ══ -->
+<section id="how-it-works" style="background:var(--bg)">
+  <div class="container">
+    <div class="section-header center fade-up">
+      <div class="section-label">↻ How It Works</div>
+      <h2 class="section-title">From project brief to<br/>final delivery in four steps.</h2>
+    </div>
+    <div class="hiw-track">
+      <div class="hiw-step fade-up">
+        <div class="hiw-num">1</div>
+        <h4>Create Your Profile</h4>
+        <p>Set up your creator or professional profile in minutes. Add your niche, style, and what you're looking for.</p>
+      </div>
+      <div class="hiw-step fade-up">
+        <div class="hiw-num">2</div>
+        <h4>Post or Apply</h4>
+        <p>Creators post projects with a brief and budget. Editors and designers browse and apply with a pitch and samples.</p>
+      </div>
+      <div class="hiw-step fade-up">
+        <div class="hiw-num">3</div>
+        <h4>Connect & Collaborate</h4>
+        <p>Chat, share files, align on vision. Use built-in revision tracking to stay organized from kickoff to delivery.</p>
+      </div>
+      <div class="hiw-step fade-up">
+        <div class="hiw-num">4</div>
+        <h4>Complete & Get Paid</h4>
+        <p>Creator approves the final deliverable, escrow releases automatically, and both parties leave verified reviews.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ BENEFITS ══ -->
+<section style="background:var(--white)">
+  <div class="container">
+    <div class="section-header center fade-up">
+      <div class="section-label">◈ Built for Both Sides</div>
+      <h2 class="section-title">Two roles. One platform.<br/>Shared success.</h2>
+    </div>
+    <div class="benefits-grid">
+      <div class="benefit-card fade-up">
+        <div class="benefit-card-header">
+          <div class="benefit-avatar benefit-avatar-creator">🎬</div>
+          <h3>For <span>Creators</span></h3>
+        </div>
+        <ul class="benefit-list">
+          <li>
+            <div class="benefit-check"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+            <span><strong>Hire faster</strong> — go from brief to matched professional in under 24 hours, not weeks.</span>
+          </li>
+          <li>
+            <div class="benefit-check"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+            <span><strong>Browse portfolios</strong> — see real past work before spending a single message.</span>
+          </li>
+          <li>
+            <div class="benefit-check"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+            <span><strong>Manage projects easily</strong> — briefs, revisions, and payments all in one dashboard.</span>
+          </li>
+          <li>
+            <div class="benefit-check"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+            <span><strong>Build a reliable team</strong> — save and re-hire your favourite professionals with one click.</span>
+          </li>
+        </ul>
+      </div>
+      <div class="benefit-card fade-up">
+        <div class="benefit-card-header">
+          <div class="benefit-avatar benefit-avatar-editor">✂️</div>
+          <h3>For <span>Editors</span></h3>
+        </div>
+        <ul class="benefit-list">
+          <li>
+            <div class="benefit-check"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+            <span><strong>Find quality clients</strong> — every creator is real, verified, and ready to commission work.</span>
+          </li>
+          <li>
+            <div class="benefit-check"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+            <span><strong>Showcase your skills</strong> — a dedicated portfolio page built to win you the right projects.</span>
+          </li>
+          <li>
+            <div class="benefit-check"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+            <span><strong>Receive secure payments</strong> — escrow protection so your work is always compensated fairly.</span>
+          </li>
+          <li>
+            <div class="benefit-check"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+            <span><strong>Grow your reputation</strong> — verified reviews build the credibility that leads to better clients.</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ TESTIMONIALS ══ -->
+<section class="testimonials-bg" id="testimonials">
+  <div class="container">
+    <div class="section-header center fade-up">
+      <div class="section-label">★ Testimonials</div>
+      <h2 class="section-title">Trusted by creators and<br/>professionals worldwide.</h2>
+    </div>
+    <div class="testi-grid">
+      <div class="testi-card fade-up">
+        <div class="testi-quote">"</div>
+        <div class="stars">★★★★★</div>
+        <p class="testi-text">I went from spending two weeks hunting for a thumbnail designer to hiring a verified pro within 24 hours. The quality was night and day compared to freelance platforms I'd used before.</p>
+        <div class="testi-author">
+          <div class="testi-avatar">🎥</div>
+          <div>
+            <div class="testi-name">Marcus Webb</div>
+            <div class="testi-role">YouTube Creator — 480K subscribers</div>
+          </div>
+        </div>
+      </div>
+      <div class="testi-card fade-up">
+        <div class="testi-quote">"</div>
+        <div class="stars">★★★★★</div>
+        <p class="testi-text">CreatorBridge gave me a steady stream of clients who actually understand content. I'm no longer chasing payments or explaining what a jump cut is. These clients value the craft.</p>
+        <div class="testi-author">
+          <div class="testi-avatar">✂️</div>
+          <div>
+            <div class="testi-name">Priya Sharma</div>
+            <div class="testi-role">Video Editor & Motion Designer</div>
+          </div>
+        </div>
+      </div>
+      <div class="testi-card fade-up">
+        <div class="testi-quote">"</div>
+        <div class="stars">★★★★★</div>
+        <p class="testi-text">I manage a team of five editors through this platform. Project tracking, revision rounds, payment — all handled. It's the infrastructure I always wished existed for running a creative operation at scale.</p>
+        <div class="testi-author">
+          <div class="testi-avatar">📱</div>
+          <div>
+            <div class="testi-name">Jade Okonkwo</div>
+            <div class="testi-role">Multi-channel Creator & Operator</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ STATS ══ -->
+<section style="background:var(--bg)">
+  <div class="container">
+    <div class="section-header center fade-up">
+      <div class="section-label">◆ Platform Scale</div>
+      <h2 class="section-title">Numbers that reflect real work.</h2>
+    </div>
+    <div class="stats-grid">
+      <div class="stat-card fade-up">
+        <div class="stat-icon">🎬</div>
+        <div class="stat-number">10,000+</div>
+        <div class="stat-label">Active Creators</div>
+      </div>
+      <div class="stat-card fade-up">
+        <div class="stat-icon">✂️</div>
+        <div class="stat-number">5,000+</div>
+        <div class="stat-label">Verified Editors</div>
+      </div>
+      <div class="stat-card fade-up">
+        <div class="stat-icon">📦</div>
+        <div class="stat-number">50,000+</div>
+        <div class="stat-label">Projects Completed</div>
+      </div>
+      <div class="stat-card fade-up">
+        <div class="stat-icon">💰</div>
+        <div class="stat-number">$2M+</div>
+        <div class="stat-label">Paid to Creatives</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ PRICING ══ -->
+<section class="pricing-bg" id="pricing">
+  <div class="container">
+    <div class="section-header center fade-up">
+      <div class="section-label">◈ Pricing</div>
+      <h2 class="section-title">Simple, transparent pricing.</h2>
+      <p class="section-sub">No hidden fees. Start free and upgrade when your team grows.</p>
+    </div>
+    <div class="pricing-grid fade-up">
+      <div class="price-card">
+        <div class="price-name">Starter</div>
+        <div class="price-amount"><sup>$</sup>0 <span class="price-period">/ month</span></div>
+        <p class="price-desc">Perfect for individual creators exploring the platform.</p>
+        <hr class="price-divider"/>
+        <ul class="price-features">
+          <li>3 active projects</li>
+          <li>Basic portfolio page</li>
+          <li>Direct messaging</li>
+          <li>Escrow payments</li>
+          <li>Community support</li>
+        </ul>
+        <button class="price-cta price-cta-default" onclick="openModal('creator')">I'm a Creator</button>
+      </div>
+      <div class="price-card featured">
+        <div class="price-badge">Most Popular</div>
+        <div class="price-name">Pro</div>
+        <div class="price-amount"><sup>$</sup>29 <span class="price-period">/ month</span></div>
+        <p class="price-desc">For creators and editors serious about building a sustainable workflow.</p>
+        <hr class="price-divider"/>
+        <ul class="price-features">
+          <li>Unlimited projects</li>
+          <li>Featured portfolio listing</li>
+          <li>Priority applicant matching</li>
+          <li>Advanced project management</li>
+          <li>Revision round tracking</li>
+          <li>Priority support</li>
+        </ul>
+        <button class="price-cta price-cta-featured" onclick="openModal('creator')">Start Pro Trial</button>
+      </div>
+      <div class="price-card">
+        <div class="price-name">Business</div>
+        <div class="price-amount"><sup>$</sup>89 <span class="price-period">/ month</span></div>
+        <p class="price-desc">For agencies, studios, and teams managing multiple creators.</p>
+        <hr class="price-divider"/>
+        <ul class="price-features">
+          <li>Everything in Pro</li>
+          <li>Up to 10 team seats</li>
+          <li>Shared team dashboard</li>
+          <li>Bulk project management</li>
+          <li>Analytics & reporting</li>
+          <li>Dedicated account manager</li>
+        </ul>
+        <button class="price-cta price-cta-default">Contact Sales</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ FINAL CTA ══ -->
+<section class="final-cta">
+  <div class="container">
+    <div class="cta-box fade-up">
+      <h2>Your Next Creative Collaboration<br/>Starts Here.</h2>
+      <p>Join a growing network of creators and professionals building better content together.</p>
+      <div class="cta-buttons">
+        <a href="#" class="btn-primary-lg" onclick="window.scrollTo({top:0,behavior:'smooth'}); return false;">Start Free Today</a>
+        <a href="#features" class="btn-secondary-lg">Learn More</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ FOOTER ══ -->
+<footer>
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <a href="#" class="nav-logo" style="margin-bottom:1rem;display:inline-flex;">
+        <div class="nav-logo-mark">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+        </div>
+        CreatorBridge
+      </a>
+      <p>The platform where content creators meet the creative professionals who make their vision real.</p>
+    </div>
+    <div class="footer-col">
+      <h5>Product</h5>
+      <ul>
+        <li><a href="#">Features</a></li>
+        <li><a href="#">Pricing</a></li>
+        <li><a href="#">Changelog</a></li>
+        <li><a href="#">Roadmap</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h5>Company</h5>
+      <ul>
+        <li><a href="#">About</a></li>
+        <li><a href="#">Blog</a></li>
+        <li><a href="#">Careers</a></li>
+        <li><a href="#">Press</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h5>Resources</h5>
+      <ul>
+        <li><a href="#">Help Center</a></li>
+        <li><a href="#">Creator Guide</a></li>
+        <li><a href="#">Editor Guide</a></li>
+        <li><a href="#">Community</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h5>Contact</h5>
+      <ul>
+        <li><a href="#">hello@creatorbridge.co</a></li>
+        <li><a href="#">Twitter / X</a></li>
+        <li><a href="#">LinkedIn</a></li>
+        <li><a href="#">Instagram</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2026 CreatorBridge. All rights reserved.</span>
+    <span style="display:flex;gap:1.5rem;">
+      <a href="#" style="color:rgba(255,255,255,0.4);text-decoration:none;font-size:0.8rem;">Privacy</a>
+      <a href="#" style="color:rgba(255,255,255,0.4);text-decoration:none;font-size:0.8rem;">Terms</a>
+      <a href="#" style="color:rgba(255,255,255,0.4);text-decoration:none;font-size:0.8rem;">Cookies</a>
+    </span>
+  </div>
+</footer>
+
+<script>
+  const nav = document.getElementById('navbar');
+  window.addEventListener('scroll', () => {
+    nav.classList.toggle('scrolled', window.scrollY > 20);
+  });
+
+  const ham = document.getElementById('hamburger');
+  const menu = document.getElementById('mobileMenu');
+
+  ham.addEventListener('click', () => {
+    const isOpen = menu.classList.toggle('open');
+    ham.classList.toggle('open', isOpen);
+    ham.setAttribute('aria-expanded', isOpen);
+    menu.setAttribute('aria-hidden', !isOpen);
+  });
+
+  menu.querySelectorAll('a').forEach(a => {
+    a.addEventListener('click', () => {
+      menu.classList.remove('open');
+      ham.classList.remove('open');
+      ham.setAttribute('aria-expanded', 'false');
+      menu.setAttribute('aria-hidden', 'true');
+    });
+  });
+
+  document.addEventListener('click', (e) => {
+    if (!nav.contains(e.target) && !menu.contains(e.target)) {
+      menu.classList.remove('open');
+      ham.classList.remove('open');
+      ham.setAttribute('aria-expanded', 'false');
+      menu.setAttribute('aria-hidden', 'true');
+    }
+  });
+
+  const fadeEls = document.querySelectorAll('.fade-up');
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); } });
+  }, { threshold: 0.12 });
+  fadeEls.forEach(el => obs.observe(el));
+
+  function animateCounter(el, target, suffix) {
+    let start = 0;
+    const duration = 1800;
+    const startTime = performance.now();
+    function update(now) {
+      const elapsed = now - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      const ease = 1 - Math.pow(1 - progress, 3);
+      const value = Math.floor(ease * target);
+      const formatted = value >= 1000000 ? (value/1000000).toFixed(1)+'M' : value >= 1000 ? value.toLocaleString() : value.toLocaleString();
+      el.textContent = (suffix === '$' ? '$' : '') + formatted + '+';
+      if (progress < 1) requestAnimationFrame(update);
+    }
+    requestAnimationFrame(update);
+  }
+
+  const statNumbers = document.querySelectorAll('.stat-number');
+  const statTargets = [10000, 5000, 50000, 2000000];
+  const statPrefixes = ['', '', '', '$'];
+  const statObs = new IntersectionObserver((entries) => {
+    entries.forEach((e) => {
+      if (e.isIntersecting) {
+        const idx = Array.from(statNumbers).indexOf(e.target);
+        if (idx !== -1) animateCounter(e.target, statTargets[idx], statPrefixes[idx]);
+        statObs.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.5 });
+  statNumbers.forEach(el => statObs.observe(el));
+</script>
+
+<!-- ══ AUTH MODAL ══ -->
+<style>
+  .cb-overlay {
+    position: fixed; inset: 0; z-index: 999;
+    background: rgba(26,35,50,0.55);
+    backdrop-filter: blur(8px);
+    display: flex; align-items: center; justify-content: center;
+    padding: 20px;
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.25s ease;
+  }
+  .cb-overlay.active { opacity: 1; pointer-events: all; }
+
+  .cb-modal {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-xl);
+    width: 100%; max-width: 440px;
+    padding: 40px 36px 36px;
+    position: relative;
+    box-shadow: var(--shadow-lg);
+    transform: translateY(16px) scale(0.98);
+    transition: transform 0.3s ease;
+  }
+  .cb-overlay.active .cb-modal { transform: translateY(0) scale(1); }
+
+  .cb-modal-bar {
+    position: absolute; top: 0; left: 0; right: 0;
+    height: 4px; border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+    transition: background 0.3s;
+  }
+  .cb-modal-bar.creator { background: linear-gradient(90deg, var(--accent), #7db3e8); }
+  .cb-modal-bar.editor  { background: linear-gradient(90deg, #16a34a, #34d399); }
+
+  .cb-close {
+    position: absolute; top: 16px; right: 16px;
+    width: 30px; height: 30px; border-radius: 8px;
+    background: var(--bg); border: 1px solid var(--border);
+    color: var(--text-muted); font-size: 18px; line-height: 1;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; transition: background 0.15s, color 0.15s;
+  }
+  .cb-close:hover { background: var(--accent-light); color: var(--accent); }
+
+  .cb-role-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    border-radius: 100px; padding: 4px 12px;
+    font-size: 0.72rem; font-weight: 700; letter-spacing: 0.06em;
+    text-transform: uppercase; margin-bottom: 16px;
+    transition: background 0.3s, color 0.3s;
+  }
+  .cb-role-badge.creator { background: var(--accent-light); color: var(--accent); }
+  .cb-role-badge.editor  { background: #dcfce7; color: #16a34a; }
+  .cb-role-dot { width: 5px; height: 5px; border-radius: 50%; }
+  .cb-role-badge.creator .cb-role-dot { background: var(--accent); }
+  .cb-role-badge.editor  .cb-role-dot { background: #16a34a; }
+
+  .cb-modal h2 {
+    font-family: 'Epilogue', sans-serif;
+    font-size: 1.5rem; font-weight: 800;
+    color: var(--text); letter-spacing: -0.03em;
+    margin-bottom: 4px;
+  }
+  .cb-modal-sub { font-size: 0.88rem; color: var(--text-muted); margin-bottom: 24px; line-height: 1.5; }
+
+  .cb-tabs {
+    display: flex; background: var(--bg);
+    border: 1px solid var(--border); border-radius: var(--radius-sm);
+    padding: 3px; margin-bottom: 24px;
+  }
+  .cb-tab {
+    flex: 1; padding: 8px; text-align: center;
+    font-size: 0.88rem; font-weight: 600; color: var(--text-muted);
+    border-radius: 9px; cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+    user-select: none;
+  }
+  .cb-tab.active { background: var(--white); color: var(--text); box-shadow: var(--shadow-sm); }
+
+  .cb-form { display: flex; flex-direction: column; gap: 14px; }
+  .cb-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .cb-field { display: flex; flex-direction: column; gap: 5px; }
+  .cb-field label { font-size: 0.8rem; font-weight: 600; color: var(--text-muted); }
+  .cb-field input {
+    padding: 11px 14px;
+    background: var(--bg); border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm); color: var(--text);
+    font-family: inherit; font-size: 0.9rem; outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .cb-field input::placeholder { color: var(--text-light); }
+  .cb-field input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(98,142,203,0.12); }
+
+  .cb-pwd-bars { display: flex; gap: 4px; margin-top: 5px; }
+  .cb-pwd-bar { flex: 1; height: 3px; border-radius: 2px; background: var(--border); transition: background 0.3s; }
+
+  .cb-forgot { font-size: 0.8rem; color: var(--text-muted); text-align: right; cursor: pointer; transition: color 0.2s; }
+  .cb-forgot:hover { color: var(--accent); }
+
+  .cb-submit {
+    width: 100%; padding: 13px;
+    border-radius: var(--radius-sm); border: none;
+    font-family: inherit; font-size: 0.95rem; font-weight: 700;
+    cursor: pointer; margin-top: 4px;
+    transition: transform 0.15s, box-shadow 0.15s, background 0.2s;
+  }
+  .cb-submit:hover { transform: translateY(-1px); }
+  .cb-submit.creator { background: var(--accent); color: white; box-shadow: 0 4px 16px rgba(98,142,203,0.35); }
+  .cb-submit.creator:hover { background: var(--accent-dark); box-shadow: 0 8px 24px rgba(98,142,203,0.4); }
+  .cb-submit.editor  { background: #16a34a; color: white; box-shadow: 0 4px 16px rgba(22,163,74,0.3); }
+  .cb-submit.editor:hover  { background: #15803d; box-shadow: 0 8px 24px rgba(22,163,74,0.38); }
+
+  .cb-divider { display: flex; align-items: center; gap: 10px; }
+  .cb-divider::before, .cb-divider::after { content:''; flex:1; height:1px; background: var(--border); }
+  .cb-divider span { font-size: 0.78rem; color: var(--text-light); }
+
+  .cb-google {
+    width: 100%; padding: 11px;
+    background: var(--white); color: var(--text);
+    border: 1.5px solid var(--border); border-radius: var(--radius-sm);
+    font-family: inherit; font-size: 0.9rem; font-weight: 600;
+    cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .cb-google:hover { border-color: var(--accent); box-shadow: var(--shadow-sm); }
+
+  .cb-terms { font-size: 0.75rem; color: var(--text-light); text-align: center; margin-top: 4px; line-height: 1.5; }
+  .cb-terms a { color: var(--text-muted); text-decoration: underline; }
+
+  .cb-success { display: none; flex-direction: column; align-items: center; text-align: center; gap: 12px; padding: 16px 0; }
+  .cb-success.visible { display: flex; }
+  .cb-success-icon {
+    width: 64px; height: 64px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center; font-size: 28px;
+  }
+  .cb-success-icon.creator { background: var(--accent-light); }
+  .cb-success-icon.editor  { background: #dcfce7; }
+  .cb-success h3 { font-family: 'Epilogue', sans-serif; font-size: 1.3rem; font-weight: 800; color: var(--text); }
+  .cb-success p { font-size: 0.88rem; color: var(--text-muted); line-height: 1.6; max-width: 280px; }
+
+  @media (max-width: 480px) {
+    .cb-modal { padding: 32px 20px 24px; }
+    .cb-row { grid-template-columns: 1fr; }
+  }
+</style>
+
+<!-- Modal HTML -->
+<div class="cb-overlay" id="cbOverlay" onclick="handleOverlayClick(event)">
+  <div class="cb-modal" id="cbModal">
+
+    <div class="cb-modal-bar" id="cbBar"></div>
+    <button class="cb-close" onclick="closeModal()">×</button>
+
+    <div class="cb-role-badge" id="cbBadge">
+      <span class="cb-role-dot"></span>
+      <span id="cbBadgeText"></span>
+    </div>
+
+    <h2 id="cbTitle"></h2>
+    <p class="cb-modal-sub" id="cbSub"></p>
+
+    <!-- Tabs -->
+    <div class="cb-tabs" id="cbTabs">
+      <div class="cb-tab active" id="tabLogin"  onclick="switchTab('login')">Log in</div>
+      <div class="cb-tab"        id="tabSignup" onclick="switchTab('signup')">Sign up</div>
+    </div>
+
+    <!-- Login form -->
+    <div id="cbFormLogin">
+      <div class="cb-form">
+        <div class="cb-field">
+          <label>Email address</label>
+          <input id="cbLoginEmail" type="email" placeholder="you@example.com" autocomplete="email"/>
+        </div>
+        <div class="cb-field">
+          <label>Password</label>
+          <input id="cbLoginPassword" type="password" placeholder="••••••••" autocomplete="current-password"/>
+        </div>
+        <div class="cb-forgot">Forgot password?</div>
+        <button class="cb-submit" id="cbLoginBtn" onclick="handleSubmit()">Log in</button>
+        <div class="cb-divider"><span>or</span></div>
+        <button class="cb-google" onclick="handleGoogleAuth()">
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+            <path d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.716v2.259h2.908C16.658 14.367 17.64 11.907 17.64 9.2z" fill="#4285F4"/>
+            <path d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 009 18z" fill="#34A853"/>
+            <path d="M3.964 10.71A5.41 5.41 0 013.682 9c0-.593.102-1.17.282-1.71V4.958H.957A8.996 8.996 0 000 9c0 1.452.348 2.827.957 4.042l3.007-2.332z" fill="#FBBC05"/>
+            <path d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 00.957 4.958L3.964 7.29C4.672 5.163 6.656 3.58 9 3.58z" fill="#EA4335"/>
+          </svg>
+          Continue with Google
+        </button>
+      </div>
+    </div>
+
+    <!-- Signup form -->
+    <div id="cbFormSignup" style="display:none">
+      <div class="cb-form">
+        <div class="cb-row">
+          <div class="cb-field">
+            <label>First name</label>
+            <input id="cbSignupFirstName" type="text" placeholder="Alex" autocomplete="given-name"/>
+          </div>
+          <div class="cb-field">
+            <label>Last name</label>
+            <input id="cbSignupLastName" type="text" placeholder="Rivera" autocomplete="family-name"/>
+          </div>
+        </div>
+        <div class="cb-field">
+          <label>Email address</label>
+          <input id="cbSignupEmail" type="email" placeholder="you@example.com" autocomplete="email"/>
+        </div>
+        <div class="cb-field">
+          <label>Password</label>
+          <input id="cbSignupPassword" type="password" placeholder="At least 8 characters" autocomplete="new-password"
+            oninput="updatePwdStrength(this.value)"/>
+          <div class="cb-pwd-bars">
+            <div class="cb-pwd-bar" id="pb1"></div>
+            <div class="cb-pwd-bar" id="pb2"></div>
+            <div class="cb-pwd-bar" id="pb3"></div>
+            <div class="cb-pwd-bar" id="pb4"></div>
+          </div>
+        </div>
+        <button class="cb-submit" id="cbSignupBtn" onclick="handleSubmit()">Create account</button>
+        <div class="cb-divider"><span>or</span></div>
+        <button class="cb-google" onclick="handleGoogleAuth()">
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+            <path d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.716v2.259h2.908C16.658 14.367 17.64 11.907 17.64 9.2z" fill="#4285F4"/>
+            <path d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 009 18z" fill="#34A853"/>
+            <path d="M3.964 10.71A5.41 5.41 0 013.682 9c0-.593.102-1.17.282-1.71V4.958H.957A8.996 8.996 0 000 9c0 1.452.348 2.827.957 4.042l3.007-2.332z" fill="#FBBC05"/>
+            <path d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 00.957 4.958L3.964 7.29C4.672 5.163 6.656 3.58 9 3.58z" fill="#EA4335"/>
+          </svg>
+          Continue with Google
+        </button>
+        <p class="cb-terms">By signing up you agree to our <a href="#">Terms</a> and <a href="#">Privacy Policy</a>.</p>
+      </div>
+    </div>
+
+    <!-- Success state -->
+    <div class="cb-success" id="cbSuccess">
+      <div class="cb-success-icon" id="cbSuccessIcon"></div>
+      <h3 id="cbSuccessTitle"></h3>
+      <p id="cbSuccessSub"></p>
+      <button class="cb-submit" id="cbSuccessBtn" style="margin-top:8px" onclick="closeModal()">Back to homepage</button>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  // ── Modal logic ──
+  let cbRole = 'creator';
+  let cbTab  = 'login';
+
+  const cbConfig = {
+    creator: {
+      badge: 'Content Creator',
+      loginTitle: 'Welcome back',
+      loginSub: 'Log in to manage your projects and find your next editor.',
+      signupTitle: 'Join as a Creator',
+      signupSub: 'Post your first project and start working with top creative talent.',
+      successIcon: '🎬',
+      successTitle: "You're in!",
+      successSub: 'Your creator account is ready. Post a project and start finding talent today.',
+    },
+    editor: {
+      badge: 'Creative Professional',
+      loginTitle: 'Welcome back',
+      loginSub: 'Log in to browse projects and manage your active work.',
+      signupTitle: 'Join as an Editor',
+      signupSub: 'Build your portfolio and get matched with creators who value your craft.',
+      successIcon: '✂️',
+      successTitle: 'Profile live!',
+      successSub: 'Your editor profile is active. Matching briefs will start appearing in your feed.',
+    }
+  };
+
+  function openModal(role) {
+    cbRole = role;
+    cbTab  = 'login';
+
+    const s = document.getElementById('cbSuccess');
+    s.classList.remove('visible');
+    s.style.display = 'none';
+
+    applyRole(role);
+    switchTab('login');
+
+    document.getElementById('cbTabs').style.display        = 'flex';
+    document.getElementById('cbFormLogin').style.display   = 'block';
+    document.getElementById('cbFormSignup').style.display  = 'none';
+    document.getElementById('cbOverlay').classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function applyRole(role) {
+    const c = cbConfig[role];
+
+    document.getElementById('cbBar').className    = 'cb-modal-bar ' + role;
+    document.getElementById('cbBadge').className  = 'cb-role-badge ' + role;
+    document.getElementById('cbBadgeText').textContent = c.badge;
+
+    document.getElementById('cbLoginBtn').className  = 'cb-submit ' + role;
+    document.getElementById('cbSignupBtn').className = 'cb-submit ' + role;
+    document.getElementById('cbSuccessBtn').className = 'cb-submit ' + role;
+
+    updateTitles(role, cbTab);
+  }
+
+  function updateTitles(role, tab) {
+    const c = cbConfig[role];
+    document.getElementById('cbTitle').textContent = tab === 'login' ? c.loginTitle  : c.signupTitle;
+    document.getElementById('cbSub').textContent   = tab === 'login' ? c.loginSub    : c.signupSub;
+  }
+
+  function switchTab(tab) {
+    cbTab = tab;
+    document.getElementById('tabLogin').classList.toggle('active',  tab === 'login');
+    document.getElementById('tabSignup').classList.toggle('active', tab === 'signup');
+    document.getElementById('cbFormLogin').style.display  = tab === 'login'  ? 'block' : 'none';
+    document.getElementById('cbFormSignup').style.display = tab === 'signup' ? 'block' : 'none';
+    updateTitles(cbRole, tab);
+  }
+
+  function closeModal() {
+    document.getElementById('cbOverlay').classList.remove('active');
+    document.body.style.overflow = '';
+  }
+
+  function handleOverlayClick(e) {
+    if (e.target === document.getElementById('cbOverlay')) closeModal();
+  }
+
+  // ── FIXED handleSubmit — reads correct IDs based on active tab ──
+  async function handleSubmit() {
+    const activeTab = document.getElementById('cbFormSignup').style.display !== 'none' ? 'signup' : 'login';
+
+    if (activeTab === 'signup') {
+      const firstName = document.getElementById('cbSignupFirstName').value.trim();
+      const lastName  = document.getElementById('cbSignupLastName').value.trim();
+      const email     = document.getElementById('cbSignupEmail').value.trim();
+      const password  = document.getElementById('cbSignupPassword').value;
+      const name      = (firstName + ' ' + lastName).trim();
+
+      if (!firstName || !email || !password) {
+        alert('Please fill in all required fields.');
+        return;
+      }
+
+      try {
+        const res = await fetch(`${AUTH_API_BASE}/auth/signup`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, email, password, role: cbRole })
+        });
+        const data = await res.json();
+        if (data.error) { alert(data.error); return; }
+        alert('Account created! You can now log in.');
+        switchTab('login');
+      } catch (err) {
+        alert('Could not reach the server. Please try again.');
+      }
+
+    } else {
+      const email    = document.getElementById('cbLoginEmail').value.trim();
+      const password = document.getElementById('cbLoginPassword').value;
+
+      if (!email || !password) {
+        alert('Please enter your email and password.');
+        return;
+      }
+
+      try {
+        const res = await fetch(`${AUTH_API_BASE}/auth/login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password })
+        });
+        const data = await res.json();
+        if (data.error) { alert(data.error); return; }
+        window.location.href = `${AUTH_API_BASE}/auth/login/verify?token=${data.token}`;
+      } catch (err) {
+        alert('Could not reach the server. Please try again.');
+      }
+    }
+  }
+
+  function goBackHome() {
+    document.getElementById('cbWelcomePage').style.display = 'none';
+    window.scrollTo({ top: 0, behavior: 'instant' });
+  }
+
+  function updatePwdStrength(val) {
+    const score = (val.length >= 8 ? 1 : 0)
+                + (/[A-Z]/.test(val) ? 1 : 0)
+                + (/[0-9]/.test(val) ? 1 : 0)
+                + (/[^A-Za-z0-9]/.test(val) ? 1 : 0);
+    const colors = ['#ef4444','#f59e0b','#628ECB','#16a34a'];
+    ['pb1','pb2','pb3','pb4'].forEach((id, i) => {
+      document.getElementById(id).style.background = i < score ? colors[score-1] : 'var(--border)';
+    });
+  }
+
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+  const AUTH_API_BASE = 'https://creatorbridge-backend-tjrd.onrender.com';
+
+  function handleGoogleAuth() {
+    const role = cbRole === 'editor' ? 'editor' : 'creator';
+    window.location.href = `${AUTH_API_BASE}/auth/google/start?role=${role}`;
+  }
+
+  function showLoginSuccess(user) {
+    const role = user.role === 'editor' ? 'editor' : 'creator';
+    cbRole = role;
+    const c = cbConfig[role];
+
+    applyRole(role);
+
+    document.getElementById('cbTabs').style.display       = 'none';
+    document.getElementById('cbFormLogin').style.display  = 'none';
+    document.getElementById('cbFormSignup').style.display = 'none';
+
+    const successEl = document.getElementById('cbSuccess');
+    document.getElementById('cbSuccessIcon').textContent  = c.successIcon;
+    document.getElementById('cbSuccessIcon').className    = 'cb-success-icon ' + role;
+    document.getElementById('cbSuccessTitle').textContent = `Welcome, ${(user.name || 'there').split(' ')[0]}!`;
+    document.getElementById('cbSuccessSub').textContent   =
+      role === 'creator'
+        ? 'Your creator account is ready. Post a project and start finding talent today.'
+        : 'Your editor profile is active. Matching briefs will start appearing in your feed.';
+
+    document.getElementById('cbOverlay').classList.add('active');
+    document.body.style.overflow = 'hidden';
+    successEl.style.display = 'flex';
+    successEl.classList.add('visible');
+
+    setTimeout(() => {
+      closeModal();
+      document.getElementById('cbWelcomePage').style.display  = 'block';
+      document.getElementById('cbWelcomeCreator').style.display = role === 'creator' ? 'block' : 'none';
+      document.getElementById('cbWelcomeEditor').style.display  = role === 'editor'  ? 'block' : 'none';
+      window.scrollTo({ top: 0, behavior: 'instant' });
+    }, 1800);
+  }
+
+  async function checkExistingSession() {
+    try {
+      const res = await fetch(`${AUTH_API_BASE}/auth/me`, {
+        credentials: 'include',
+      });
+      if (!res.ok) return null;
+      const data = await res.json();
+      return data.user || null;
+    } catch (err) {
+      console.warn('Could not reach auth backend:', err);
+      return null;
+    }
+  }
+
+  async function handleLogout() {
+    try {
+      await fetch(`${AUTH_API_BASE}/auth/logout`, {
+        method: 'POST',
+        credentials: 'include',
+      });
+    } catch (err) {
+      console.warn('Logout request failed:', err);
+    }
+    goBackHome();
+  }
+
+  (async function initAuthState() {
+    const params = new URLSearchParams(window.location.search);
+    const loginResult = params.get('login');
+    const authError = params.get('auth_error');
+
+    if (authError) {
+      console.warn('Google login failed:', authError);
+      window.history.replaceState({}, '', window.location.pathname);
+      return;
+    }
+
+    if (loginResult === 'success') {
+      const urlName = params.get('name');
+      const urlEmail = params.get('email');
+      const urlRole = params.get('role');
+      window.history.replaceState({}, '', window.location.pathname);
+      if (urlName && urlRole) {
+        cbRole = urlRole;
+        showLoginSuccess({ name: urlName, email: urlEmail, role: urlRole });
+      }
+      return;
+    }
+
+    const user = await checkExistingSession();
+    if (user) {
+      cbRole = user.role === 'editor' ? 'editor' : 'creator';
+      document.getElementById('cbWelcomePage').style.display = 'block';
+      document.getElementById('cbWelcomeCreator').style.display = cbRole === 'creator' ? 'block' : 'none';
+      document.getElementById('cbWelcomeEditor').style.display  = cbRole === 'editor'  ? 'block' : 'none';
+    }
+  })();
+</script>
+
+<!-- ══ DASHBOARD ══ -->
+<style>
+  #cbWelcomePage {
+    display: none; position: fixed; inset: 0; z-index: 2000;
+    background: #0d0d0d; overflow-y: auto;
+    font-family: 'Inter', sans-serif;
+  }
+  .db-topbar {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1.1rem 2rem;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+  .db-logo { font-family: 'Epilogue', sans-serif; font-weight: 700; font-size: 1.1rem; color: #fff; }
+  .db-back {
+    padding: 0.5rem 1.2rem; background: transparent;
+    border: 1px solid rgba(255,255,255,0.2); border-radius: 10px;
+    color: rgba(255,255,255,0.7); font-family: inherit;
+    font-size: 0.85rem; cursor: pointer; transition: all 0.2s;
+  }
+  .db-back:hover { background: rgba(255,255,255,0.08); color: #fff; }
+  .db-body { max-width: 900px; margin: 0 auto; padding: 3rem 2rem; }
+  .db-stats {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 14px; margin-bottom: 2.5rem;
+  }
+  .db-stat { background: #1a1a1a; border: 1px solid rgba(255,255,255,0.07); border-radius: 14px; padding: 1.2rem 1.4rem; }
+  .db-stat-label { font-size: 0.75rem; color: rgba(255,255,255,0.4); margin-bottom: 6px; }
+  .db-stat-val { font-size: 1.6rem; font-weight: 700; color: #fff; }
+  .db-section-title { font-size: 0.78rem; font-weight: 600; color: rgba(255,255,255,0.35); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 1rem; }
+  .db-cards { display: flex; flex-direction: column; gap: 10px; margin-bottom: 2.5rem; }
+  .db-card {
+    background: #1a1a1a; border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 14px; padding: 1.1rem 1.4rem;
+    display: flex; align-items: center; gap: 14px;
+  }
+  .db-card-icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; flex-shrink: 0; }
+  .db-card-title { font-size: 0.95rem; font-weight: 600; color: #fff; margin-bottom: 2px; }
+  .db-card-sub { font-size: 0.8rem; color: rgba(255,255,255,0.4); }
+  .db-pill { margin-left: auto; font-size: 0.72rem; font-weight: 600; padding: 4px 10px; border-radius: 20px; white-space: nowrap; }
+  .pill-open   { background: rgba(22,163,74,0.15);  color: #4ade80; }
+  .pill-prog   { background: rgba(98,142,203,0.15); color: #93c5fd; }
+  .pill-done   { background: rgba(168,85,247,0.15); color: #c084fc; }
+  .pill-review { background: rgba(251,191,36,0.15); color: #fbbf24; }
+</style>
+
+<div id="cbWelcomePage">
+  <div class="db-topbar">
+    <div class="db-logo">CreatorBridge</div>
+    <div style="display:flex;gap:10px;">
+      <button class="db-back" onclick="goBackHome()">← Back to homepage</button>
+      <button class="db-back" onclick="handleLogout()">Log out</button>
+    </div>
+  </div>
+
+  <!-- Creator dashboard -->
+  <div id="cbWelcomeCreator" style="display:none">
+    <div class="db-body">
+      <div class="db-stats">
+        <div class="db-stat"><div class="db-stat-label">Active projects</div><div class="db-stat-val">3</div></div>
+        <div class="db-stat"><div class="db-stat-label">Applicants</div><div class="db-stat-val">12</div></div>
+        <div class="db-stat"><div class="db-stat-label">Completed</div><div class="db-stat-val">28</div></div>
+        <div class="db-stat"><div class="db-stat-label">Total spent</div><div class="db-stat-val">$1.4k</div></div>
+      </div>
+      <div class="db-section-title">My projects</div>
+      <div class="db-cards">
+        <div class="db-card">
+          <div class="db-card-icon" style="background:rgba(98,142,203,0.15)">📝</div>
+          <div><div class="db-card-title">YouTube Thumbnail — Tech Review</div><div class="db-card-sub">Budget $80 · 4 applicants</div></div>
+          <span class="db-pill pill-open">Open</span>
+        </div>
+        <div class="db-card">
+          <div class="db-card-icon" style="background:rgba(22,163,74,0.15)">🎬</div>
+          <div><div class="db-card-title">Intro animation — new series</div><div class="db-card-sub">Budget $250 · Alex R. hired</div></div>
+          <span class="db-pill pill-prog">In progress</span>
+        </div>
+        <div class="db-card">
+          <div class="db-card-icon" style="background:rgba(168,85,247,0.15)">✂️</div>
+          <div><div class="db-card-title">Short-form video edits (x5)</div><div class="db-card-sub">Budget $400 · Priya S.</div></div>
+          <span class="db-pill pill-done">Complete</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Editor dashboard -->
+  <div id="cbWelcomeEditor" style="display:none">
+    <div class="db-body">
+      <div class="db-stats">
+        <div class="db-stat"><div class="db-stat-label">Active jobs</div><div class="db-stat-val">2</div></div>
+        <div class="db-stat"><div class="db-stat-label">Applied</div><div class="db-stat-val">5</div></div>
+        <div class="db-stat"><div class="db-stat-label">Completed</div><div class="db-stat-val">41</div></div>
+        <div class="db-stat"><div class="db-stat-label">Total earned</div><div class="db-stat-val">$3.2k</div></div>
+      </div>
+      <div class="db-section-title">My jobs</div>
+      <div class="db-cards">
+        <div class="db-card">
+          <div class="db-card-icon" style="background:rgba(98,142,203,0.15)">✂️</div>
+          <div><div class="db-card-title">Short-form video edits (x5)</div><div class="db-card-sub">Marcus K. · Due in 3 days</div></div>
+          <span class="db-pill pill-prog">In progress</span>
+        </div>
+        <div class="db-card">
+          <div class="db-card-icon" style="background:rgba(251,191,36,0.15)">🎙️</div>
+          <div><div class="db-card-title">Podcast episode cuts (x3)</div><div class="db-card-sub">Jade O. · Awaiting review</div></div>
+          <span class="db-pill pill-review">Review</span>
+        </div>
+      </div>
+      <div class="db-section-title">Open projects</div>
+      <div class="db-cards">
+        <div class="db-card">
+          <div class="db-card-icon" style="background:rgba(22,163,74,0.15)">📸</div>
+          <div><div class="db-card-title">YouTube Thumbnail — Tech Review</div><div class="db-card-sub">Budget $80 · 4 others applied</div></div>
+          <span class="db-pill pill-open">Open</span>
+        </div>
+        <div class="db-card">
+          <div class="db-card-icon" style="background:rgba(168,85,247,0.15)">📱</div>
+          <div><div class="db-card-title">Reels editor — lifestyle channel</div><div class="db-card-sub">Budget $300 · 2 others applied</div></div>
+          <span class="db-pill pill-open">Open</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
