@@ -66,6 +66,7 @@ const userSchema = new mongoose.Schema({
   verified: { type: Boolean, default: true },
   onboarding: {
     done:   { type: Boolean, default: false },
+    name:   String,
     bio:    String,
     skills: [String],
     img:    String,
@@ -253,10 +254,10 @@ app.get('/auth/login/verify', (req, res) => {
 // Save onboarding profile
 app.post('/auth/onboarding', requireAuth, async (req, res) => {
   try {
-    const { bio, skills, img } = req.body;
+    const { name, bio, skills, img, done } = req.body;
     await User.findOneAndUpdate(
       { email: req.user.email },
-      { onboarding: { done: true, bio, skills, img } }
+      { onboarding: { done: done || true, bio, skills, img, name } }
     );
     res.json({ ok: true });
   } catch (err) {
