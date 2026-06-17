@@ -9,6 +9,16 @@ const jwt = require('jsonwebtoken');
 const { OAuth2Client } = require('google-auth-library');
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
+const multer = require('multer');
+const cloudinary = require('cloudinary').v2;
+
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
+
+const upload = multer({ storage: multer.memoryStorage() });
 
 const {
   GOOGLE_CLIENT_ID,
@@ -70,6 +80,7 @@ const userSchema = new mongoose.Schema({
     bio:    String,
     skills: [String],
     img:    String,
+    portfolio: [String],
   },
 });
 const User = mongoose.model('User', userSchema);
@@ -285,6 +296,73 @@ app.get('/auth/onboarding', requireAuth, async (req, res) => {
   }
 });
 
+
+// Upload profile picture to Cloudinary
+app.post('/upload/pfp', requireAuth, upload.single('pfp'), async (req, res) => {
+  try {
+    if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
+    const result = await new Promise((resolve, reject) => {
+      cloudinary.uploader.upload_stream(
+        { folder: 'bifrost/pfp', resource_type: 'image' },
+        (err, result) => err ? reject(err) : resolve(result)
+      ).end(req.file.buffer);
+    });
+    await User.findOneAndUpdate(
+      { email: req.user.email },
+      { 'onboarding.img': result.secure_url }
+    );
+    res.json({ ok: true, url: result.secure_url });
+  } catch (err) {
+    console.error('PFP upload error:', err.message);
+    res.status(500).json({ error: 'Upload failed' });
+  }
+});
+
+// Upload portfolio item to Cloudinary
+app.post('/upload/portfolio', requireAuth, upload.single('file'), async (req, res) => {
+  try {
+    if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
+    const isVideo = req.file.mimetype.startsWith('video/');
+    const result = await new Promise((resolve, reject) => {
+      cloudinary.uploader.upload_stream(
+        { folder: 'bifrost/portfolio', resource_type: isVideo ? 'video' : 'image' },
+        (err, result) => err ? reject(err) : resolve(result)
+      ).end(req.file.buffer);
+    });
+    await User.findOneAndUpdate(
+      { email: req.user.email },
+      { $push: { 'onboarding.portfolio': result.secure_url } }
+    );
+    res.json({ ok: true, url: result.secure_url, type: isVideo ? 'video' : 'image' });
+  } catch (err) {
+    console.error('Portfolio upload error:', err.message);
+    res.status(500).json({ error: 'Upload failed' });
+  }
+});
+
+// Delete portfolio item
+app.post('/upload/portfolio/delete', requireAuth, async (req, res) => {
+  try {
+    const { url } = req.body;
+    await User.findOneAndUpdate(
+      { email: req.user.email },
+      { $pull: { 'onboarding.portfolio': url } }
+    );
+    res.json({ ok: true });
+  } catch (err) {
+    res.status(500).json({ error: 'Delete failed' });
+  }
+});
+
+// Get portfolio
+app.get('/upload/portfolio', requireAuth, async (req, res) => {
+  try {
+    const user = await User.findOne({ email: req.user.email });
+    res.json({ portfolio: user?.onboarding?.portfolio || [] });
+  } catch (err) {
+    res.status(500).json({ error: 'Server error' });
+  }
+});
 app.listen(PORT, () => {
   console.log(`CreatorBridge auth backend listening on http://127.0.0.1:${PORT}`);
   console.log(`Frontend URL: ${FRONTEND_URL}`);
