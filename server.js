@@ -166,6 +166,13 @@ app.get('/auth/google/callback', async (req, res) => {
       role,
     };
 
+    // Save Google user to MongoDB if they dont exist yet
+    await User.findOneAndUpdate(
+      { email: payload.email },
+      { $setOnInsert: { name: payload.name || payload.email, email: payload.email, role, verified: true } },
+      { upsert: true, new: true }
+    );
+
     const sessionToken = signSession(user);
     setSessionCookie(res, sessionToken);
 
